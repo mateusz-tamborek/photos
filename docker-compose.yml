@@ -1,0 +1,18 @@
+version: '3.7'
+
+services:
+  backend-app:
+    build: .
+    image: gallery
+    depends_on:
+      - db
+    ports:
+      - 80:8080
+  db:
+    image: postgres:alpine
+    environment:
+      POSTGRES_USER: "user"
+      POSTGRES_PASSWORD: "passwd"
+      POSTGRES_DB: "gallery"
+    ports:
+      - 5432:5432
