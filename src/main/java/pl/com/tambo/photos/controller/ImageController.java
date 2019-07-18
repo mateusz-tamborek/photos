@@ -9,13 +9,13 @@ import pl.com.tambo.photos.model.Image;
 import pl.com.tambo.photos.service.ImageService;
 
 @RestController
-@RequestMapping("/image")
+@RequestMapping("/images")
 @RequiredArgsConstructor
 public class ImageController {
 
     private final ImageService imageService;
 
-    @PostMapping(value = "/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public void handleFileUpload(@RequestParam("file") MultipartFile file) {
         Image image = new Image(file);
