@@ -28,6 +28,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     compile "io.springfox:springfox-swagger2:$springfox"
     compile "io.springfox:springfox-swagger-ui:$springfox"
+    compile 'net.coobird:thumbnailator:0.4.8'
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'org.postgresql:postgresql'
     annotationProcessor 'org.projectlombok:lombok'
