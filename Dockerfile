@@ -6,14 +6,12 @@ WORKDIR /home/gradle/src
 RUN gradle clean bootJar
 
 # deploy stage
-FROM openjdk:8-jdk
+FROM openjdk:8-jdk-alpine
 
 ENV SPRING_PROFILE="docker"
-ENV APP_NAME="photo-gallery"
+ENV APP_NAME="photos"
 
-COPY --from=build /home/gradle/src/build/libs/${APP_NAME}*-*.jar /${APP_NAME}.jar
-
-EXPOSE 8080
-CMD java -server \
+COPY --from=build /home/gradle/src/build/libs/${APP_NAME}*-*.jar /app.jar
+ENTRYPOINT java -server \
     -Dspring.profiles.active=${SPRING_PROFILE} \
-    -jar /${APP_NAME}.jar
+    -jar /app.jar
