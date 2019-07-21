@@ -20,10 +20,9 @@ public class ImageEntity {
     @Id
     private UUID id;
 
-    private String originalFilename;
+    private String filename;
 
-    @Column(nullable = false,
-            updatable = false)
+    @Column(nullable = false, updatable = false)
     private LocalDateTime uploadTimestamp;
 
     @Tolerate

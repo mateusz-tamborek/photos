@@ -7,6 +7,8 @@ import pl.com.tambo.photos.delivery.dto.ImageDTO;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ImageDtoPresenter {
@@ -17,6 +19,12 @@ public class ImageDtoPresenter {
                 .filename(image.getFilename())
                 .uploadTimestamp(getTimestamp(image.getUploadTimestamp()))
                 .build();
+    }
+
+    public static List<ImageDTO> getResponse(List<Image> images) {
+        return images.stream()
+                .map(ImageDtoPresenter::getResponse)
+                .collect(Collectors.toList());
     }
 
     private static long getTimestamp(LocalDateTime dateTime) {

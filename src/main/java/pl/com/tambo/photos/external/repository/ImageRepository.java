@@ -2,15 +2,17 @@ package pl.com.tambo.photos.external.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import pl.com.tambo.photos.core.model.Image;
 import pl.com.tambo.photos.external.entity.ImageEntity;
 
 import javax.persistence.EntityNotFoundException;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -32,10 +34,16 @@ public class ImageRepository {
         return fromEntity(entity);
     }
 
+    public List<Image> findAll(Pageable pageable) {
+        Page<ImageEntity> page = repository.findAll(pageable);
+        return page.map(this::fromEntity)
+                .getContent();
+    }
+
     private ImageEntity toEntity(Image image) {
         return ImageEntity.builder()
                 .id(image.getId())
-                .originalFilename(image.getFilename())
+                .filename(image.getFilename())
                 .uploadTimestamp(LocalDateTime.now())
                 .build();
     }
@@ -43,7 +51,7 @@ public class ImageRepository {
     private Image fromEntity(ImageEntity entity) {
         return Image.builder()
                 .id(entity.getId())
-                .filename(entity.getOriginalFilename())
+                .filename(entity.getFilename())
                 .uploadTimestamp(entity.getUploadTimestamp())
                 .path(uploadPath)
                 .build();
@@ -52,6 +60,6 @@ public class ImageRepository {
 }
 
 @Repository
-@Transactional
 interface JpaImageRepository extends PagingAndSortingRepository<ImageEntity, UUID> {
 }
+

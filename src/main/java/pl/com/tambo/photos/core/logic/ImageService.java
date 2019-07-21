@@ -2,6 +2,7 @@ package pl.com.tambo.photos.core.logic;
 
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pl.com.tambo.photos.core.exception.StoreImageException;
 import pl.com.tambo.photos.core.model.Image;
@@ -13,6 +14,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -53,6 +55,10 @@ public class ImageService {
 
     public Image findBy(UUID id) {
         return imageRepository.findBy(id);
+    }
+
+    public List<Image> findAll(Pageable pageable) {
+        return imageRepository.findAll(pageable);
     }
 
     private void storeOriginalImage(UploadRequest uploadRequest, Image image) throws IOException {
