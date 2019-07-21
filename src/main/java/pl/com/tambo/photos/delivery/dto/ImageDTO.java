@@ -9,7 +9,7 @@ import lombok.ToString;
 @Getter
 @ToString
 @Builder
-@ApiModel(value = "FullImage")
+@ApiModel(value = "Image")
 public class ImageDTO {
 
     @ApiModelProperty(example = "0c3247b8-a3b1-4762-b195-344d890b270f")
