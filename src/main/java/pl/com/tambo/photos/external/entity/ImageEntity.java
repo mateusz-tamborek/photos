@@ -1,4 +1,4 @@
-package pl.com.tambo.photos.entity;
+package pl.com.tambo.photos.external.entity;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -22,9 +22,7 @@ public class ImageEntity {
 
     private String originalFilename;
 
-    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
-            nullable = false,
-            insertable = false,
+    @Column(nullable = false,
             updatable = false)
     private LocalDateTime uploadTimestamp;
 

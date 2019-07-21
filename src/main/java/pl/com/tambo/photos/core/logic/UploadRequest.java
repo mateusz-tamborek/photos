@@ -1,24 +1,25 @@
-package pl.com.tambo.photos.model;
+package pl.com.tambo.photos.core.logic;
 
 import lombok.Getter;
 import org.springframework.web.multipart.MultipartFile;
+import pl.com.tambo.photos.core.exception.UnsupportedImageTypeException;
 
 import javax.imageio.ImageIO;
 import java.io.IOException;
 import java.util.UUID;
 
 @Getter
-public class Image {
+public class UploadRequest {
 
-    private UUID imageId = UUID.randomUUID();
-    private MultipartFile file;
+    private final UUID id = UUID.randomUUID();
+    private final MultipartFile file;
 
-    public Image(MultipartFile file) {
+    public UploadRequest(MultipartFile file) {
         validateImage(file);
         this.file = file;
     }
 
-    public String getFilename() {
+    String getFilename() {
         return file.getOriginalFilename();
     }
 
@@ -33,8 +34,5 @@ public class Image {
         } catch (IOException e) {
             throw new UnsupportedImageTypeException();
         }
-    }
-
-    private class UnsupportedImageTypeException extends RuntimeException {
     }
 }
