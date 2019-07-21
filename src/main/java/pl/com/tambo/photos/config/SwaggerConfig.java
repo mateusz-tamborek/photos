@@ -2,6 +2,7 @@ package pl.com.tambo.photos.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.domain.Pageable;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.Contact;
@@ -19,6 +20,7 @@ public class SwaggerConfig {
                 .select()
                     .apis(RequestHandlerSelectors.basePackage("pl.com.tambo"))
                 .build()
+                .ignoredParameterTypes(Pageable.class)
                 .apiInfo(new ApiInfoBuilder()
                         .title("Photo gallery")
                         .description("API documentation")

@@ -16,7 +16,6 @@ import pl.com.tambo.photos.delivery.ApiPageable;
 import pl.com.tambo.photos.delivery.dto.ImageDTO;
 import pl.com.tambo.photos.delivery.presenter.ImageDtoPresenter;
 import pl.com.tambo.photos.delivery.presenter.ImagePresenter;
-import springfox.documentation.annotations.ApiIgnore;
 
 import java.io.IOException;
 import java.util.List;
@@ -43,7 +42,7 @@ public class ImageController {
 
     @GetMapping(value = "/images", produces = APPLICATION_JSON_UTF8_VALUE)
     @ApiPageable
-    public List<ImageDTO> listImages(@ApiIgnore Pageable pageable) {
+    public List<ImageDTO> listImages(Pageable pageable) {
         List<Image> images = imageService.findAll(pageable);
         return ImageDtoPresenter.getResponse(images);
     }
