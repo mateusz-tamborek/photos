@@ -49,6 +49,14 @@ public class ImageController {
         return ImageDtoPresenter.getResponse(images);
     }
 
+    @DeleteMapping("/images/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteImage(
+            @ApiParam(value = "Image identifier", required = true)
+            @PathVariable(name = "id") UUID id) {
+        imageService.delete(id);
+    }
+
     @GetMapping("/images/{id}")
     public ResponseEntity<byte[]> getImage(
             @ApiParam(value = "Image identifier", required = true)

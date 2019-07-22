@@ -46,6 +46,10 @@ public class ImageRepository {
         return fromEntity(persisted);
     }
 
+    public void delete(UUID id) {
+        repository.deleteById(id);
+    }
+
     private ImageEntity toEntity(Image image) {
         return ImageEntity.builder()
                 .id(image.getId())

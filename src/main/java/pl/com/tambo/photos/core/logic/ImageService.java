@@ -65,6 +65,10 @@ public class ImageService {
         return imageRepository.findByNameContaining(name, pageable);
     }
 
+    public void delete(UUID id) {
+        imageRepository.delete(id);
+    }
+
     private void storeOriginalImage(UploadRequest uploadRequest, Image image) throws IOException {
         uploadRequest.getFile().transferTo(image.getPath());
     }
