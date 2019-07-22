@@ -42,8 +42,10 @@ public class ImageController {
 
     @GetMapping(value = "/images", produces = APPLICATION_JSON_UTF8_VALUE)
     @ApiPageable
-    public List<ImageDTO> listImages(Pageable pageable) {
-        List<Image> images = imageService.findAll(pageable);
+    public List<ImageDTO> getImagesInfo(Pageable pageable,
+            @ApiParam(value = "Searching by filename. Works as LIKE %name%")
+            @RequestParam(name = "name", required = false) String name) {
+        List<Image> images = name == null ? imageService.findAll(pageable) : imageService.findByName(name, pageable);
         return ImageDtoPresenter.getResponse(images);
     }
 

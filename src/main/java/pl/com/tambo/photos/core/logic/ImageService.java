@@ -61,6 +61,10 @@ public class ImageService {
         return imageRepository.findAll(pageable);
     }
 
+    public List<Image> findByName(String name, Pageable pageable) {
+        return imageRepository.findByNameContaining(name, pageable);
+    }
+
     private void storeOriginalImage(UploadRequest uploadRequest, Image image) throws IOException {
         uploadRequest.getFile().transferTo(image.getPath());
     }

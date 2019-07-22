@@ -23,9 +23,10 @@ public class ImageRepository {
     private Path uploadPath;
     private final JpaImageRepository repository;
 
-    public Image save(Image image) {
-        ImageEntity persisted = repository.save(toEntity(image));
-        return fromEntity(persisted);
+    public List<Image> findAll(Pageable pageable) {
+        Page<ImageEntity> page = repository.findAll(pageable);
+        return page.map(this::fromEntity)
+                .getContent();
     }
 
     public Image findBy(UUID id) {
@@ -34,10 +35,15 @@ public class ImageRepository {
         return fromEntity(entity);
     }
 
-    public List<Image> findAll(Pageable pageable) {
-        Page<ImageEntity> page = repository.findAll(pageable);
+    public List<Image> findByNameContaining(String name, Pageable pageable) {
+        Page<ImageEntity> page = repository.findAllByFilenameIgnoreCaseContaining(name, pageable);
         return page.map(this::fromEntity)
                 .getContent();
+    }
+
+    public Image save(Image image) {
+        ImageEntity persisted = repository.save(toEntity(image));
+        return fromEntity(persisted);
     }
 
     private ImageEntity toEntity(Image image) {
@@ -61,5 +67,6 @@ public class ImageRepository {
 
 @Repository
 interface JpaImageRepository extends PagingAndSortingRepository<ImageEntity, UUID> {
+    Page<ImageEntity> findAllByFilenameIgnoreCaseContaining(String filename, Pageable pageable);
 }
 
