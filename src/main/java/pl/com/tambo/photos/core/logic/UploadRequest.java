@@ -29,10 +29,10 @@ public class UploadRequest {
         // and the Thumbnailator lib also uses ImageIO.
         try {
             if (ImageIO.read(file.getInputStream()) == null) {
-                throw new UnsupportedImageTypeException();
+                throw new UnsupportedImageTypeException(file.getOriginalFilename());
             }
         } catch (IOException e) {
-            throw new UnsupportedImageTypeException();
+            throw new UnsupportedImageTypeException(file.getOriginalFilename());
         }
     }
 }

@@ -2,14 +2,15 @@ package pl.com.tambo.photos.external.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
+import pl.com.tambo.photos.core.exception.ImageNotFoundException;
 import pl.com.tambo.photos.core.model.Image;
 import pl.com.tambo.photos.external.entity.ImageEntity;
 
-import javax.persistence.EntityNotFoundException;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -31,7 +32,7 @@ public class ImageRepository {
 
     public Image findBy(UUID id) {
         ImageEntity entity = repository.findById(id)
-                .orElseThrow(EntityNotFoundException::new);
+                .orElseThrow(() -> new ImageNotFoundException(id));
         return fromEntity(entity);
     }
 
@@ -47,7 +48,11 @@ public class ImageRepository {
     }
 
     public void delete(UUID id) {
-        repository.deleteById(id);
+        try {
+            repository.deleteById(id);
+        } catch (EmptyResultDataAccessException ex) {
+            throw new ImageNotFoundException(id);
+        }
     }
 
     private ImageEntity toEntity(Image image) {
