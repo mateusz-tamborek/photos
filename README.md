@@ -22,3 +22,9 @@ go to: http://localhost/swagger-ui.html
  - PostgreSQL
  - Lombok
  - Swagger
+ 
+ ### TODO:
+  - users
+  - security
+  - tests
+  
