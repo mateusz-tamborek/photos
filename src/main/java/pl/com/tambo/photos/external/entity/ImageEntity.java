@@ -14,7 +14,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
-@Entity(name = "image")
+@Entity(name = "images")
 public class ImageEntity {
 
     @Id

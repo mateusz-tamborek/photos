@@ -1,4 +1,4 @@
-package pl.com.tambo.photos.delivery.dto;
+package pl.com.tambo.photos.delivery.dto.response;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -10,7 +10,7 @@ import lombok.ToString;
 @ToString
 @Builder
 @ApiModel(value = "Image")
-public class ImageDTO {
+public class ImageResponse {
 
     @ApiModelProperty(example = "0c3247b8-a3b1-4762-b195-344d890b270f")
     private String id;

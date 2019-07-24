@@ -9,17 +9,17 @@ import java.io.IOException;
 import java.util.UUID;
 
 @Getter
-public class UploadRequest {
+public class ImageFile {
 
     private final UUID id = UUID.randomUUID();
     private final MultipartFile file;
 
-    public UploadRequest(MultipartFile file) {
+    public ImageFile(MultipartFile file) {
         validateImage(file);
         this.file = file;
     }
 
-    String getFilename() {
+    String name() {
         return file.getOriginalFilename();
     }
 

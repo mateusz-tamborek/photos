@@ -74,7 +74,7 @@ public class ImageRepository {
 
 }
 
-@Repository
+//@Repository
 interface JpaImageRepository extends PagingAndSortingRepository<ImageEntity, UUID> {
     Page<ImageEntity> findAllByFilenameIgnoreCaseContaining(String filename, Pageable pageable);
 }

@@ -30,15 +30,15 @@ public class ImageService {
         Files.createDirectories(thumbnailPath);
     }
 
-    public Image save(UploadRequest uploadRequest) {
+    public Image save(ImageFile imageFile) {
         Image image = Image.builder()
-                .id(uploadRequest.getId())
-                .filename(uploadRequest.getFilename())
+                .id(imageFile.getId())
+                .filename(imageFile.name())
                 .path(uploadPath)
                 .build();
         try {
-            createAndStoreThumbnail(uploadRequest, image.getThumbnail());
-            storeOriginalImage(uploadRequest, image);
+            createAndStoreThumbnail(imageFile, image.getThumbnail());
+            storeOriginalImage(imageFile, image);
             return imageRepository.save(image);
         } catch (Exception cleanupEx) {
             try {
@@ -69,12 +69,12 @@ public class ImageService {
         imageRepository.delete(id);
     }
 
-    private void storeOriginalImage(UploadRequest uploadRequest, Image image) throws IOException {
-        uploadRequest.getFile().transferTo(image.getPath());
+    private void storeOriginalImage(ImageFile imageFile, Image image) throws IOException {
+        imageFile.getFile().transferTo(image.getPath());
     }
 
-    private void createAndStoreThumbnail(UploadRequest uploadRequest, Thumbnail image) throws IOException {
-        BufferedImage thumbnail = Thumbnails.of(uploadRequest.getFile().getInputStream())
+    private void createAndStoreThumbnail(ImageFile imageFile, Thumbnail image) throws IOException {
+        BufferedImage thumbnail = Thumbnails.of(imageFile.getFile().getInputStream())
                 .size(Thumbnail.SIZE, Thumbnail.SIZE)
                 .asBufferedImage();
         ImageIO.write(thumbnail, Thumbnail.FORMAT, image.getPath().toFile());

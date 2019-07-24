@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @Builder
 @Getter
-public class Image implements ImageFile {
+public class Image implements Storable {
 
     private final UUID id;
     private final String filename;
@@ -24,7 +24,7 @@ public class Image implements ImageFile {
     }
 
 
-    public class Thumbnail implements ImageFile {
+    public class Thumbnail implements Storable {
 
         public static final short SIZE = 50;
         public static final String FORMAT = "png";
