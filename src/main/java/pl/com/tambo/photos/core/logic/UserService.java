@@ -7,12 +7,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import pl.com.tambo.photos.config.security.JwtTokenProvider;
 import pl.com.tambo.photos.core.exception.AuthenticationException;
+import pl.com.tambo.photos.core.exception.UserAlreadyExistsException;
 import pl.com.tambo.photos.core.model.User;
 import pl.com.tambo.photos.delivery.dto.request.AuthenticationRequest;
+import pl.com.tambo.photos.delivery.dto.request.UserRequest;
 import pl.com.tambo.photos.external.repository.UserRepository;
 
 import java.util.Collections;
 import java.util.List;
+
+import static com.google.common.base.MoreObjects.firstNonNull;
 
 @Service
 @RequiredArgsConstructor
@@ -23,13 +27,23 @@ public class UserService {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
 
-    public User createUser(AuthenticationRequest request) {
+    public User createUser(UserRequest request) {
+        checkEmail(request);
         User user = User.builder()
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .roles(Collections.singletonList("ROLE_USER"))
                 .build();
         return userRepository.save(user);
+    }
+
+    public void updateUser(UserRequest request) {
+        checkEmail(request);
+        User user = userRepository.findById(request.getId());
+        user.setEmail(firstNonNull(request.getEmail(), user.getEmail()));
+        String password = request.getPassword() != null ? passwordEncoder.encode(request.getPassword()) : null;
+        user.setPassword(firstNonNull(password, user.getPassword()));
+        userRepository.save(user);
     }
 
     public String createToken(AuthenticationRequest request) {
@@ -42,4 +56,11 @@ public class UserService {
             throw new AuthenticationException("Invalid email/password supplied");
         }
     }
+
+    private void checkEmail(UserRequest request) {
+        if (userRepository.emailExists(request.getEmail())) {
+            throw new UserAlreadyExistsException(request.getEmail());
+        }
+    }
+
 }

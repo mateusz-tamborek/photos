@@ -21,13 +21,12 @@ public class User implements UserDetails {
     private final long id;
 
     @NotBlank
-    @Size(max = 40)
     @Email
-    private final String email;
+    private String email;
 
     @NotBlank
-    @Size(max = 100)
-    private final String password;
+    @Size(min = 8, max = 20)
+    private String password;
 
     private final List<String> roles;
 

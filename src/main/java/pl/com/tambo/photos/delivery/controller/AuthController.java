@@ -10,6 +10,8 @@ import pl.com.tambo.photos.core.logic.UserService;
 import pl.com.tambo.photos.delivery.dto.request.AuthenticationRequest;
 import pl.com.tambo.photos.delivery.dto.response.TokenResponse;
 
+import javax.validation.Valid;
+
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 
 @RestController
@@ -21,7 +23,7 @@ public class AuthController {
     private final UserService userService;
 
     @PostMapping(value = "/token", consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
-    public TokenResponse signIn(@RequestBody AuthenticationRequest credentials) {
+    public TokenResponse signIn(@RequestBody @Valid AuthenticationRequest credentials) {
         String token = userService.createToken(credentials);
         return new TokenResponse(token);
     }

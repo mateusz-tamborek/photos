@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
-import pl.com.tambo.photos.core.exception.UserAlreadyExistsException;
 import pl.com.tambo.photos.core.exception.UserNotFoundException;
 import pl.com.tambo.photos.core.model.User;
 import pl.com.tambo.photos.external.entity.UserEntity;
@@ -19,9 +18,6 @@ public class UserRepository implements UserDetailsService {
     private final JpaUserRepository users;
 
     public User save(User newUser) {
-        if(users.existsByEmail(newUser.getEmail())) {
-            throw new UserAlreadyExistsException(newUser.getEmail());
-        }
         UserEntity entity = users.saveAndFlush(toEntity(newUser));
         return fromEntity(entity);
     }
@@ -30,7 +26,16 @@ public class UserRepository implements UserDetailsService {
     public User loadUserByUsername(String email) {
         return users.findByEmail(email)
                 .map(this::fromEntity)
-                .orElseThrow(() -> new UserNotFoundException(email));
+                .orElseThrow(() -> new UserNotFoundException("User with email: " + email + " not found"));
+    }
+
+    public boolean emailExists(String email) {
+        return users.existsByEmail(email);
+    }
+
+    public User findById(long id) {
+        return fromEntity(users.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User with id: " + id + " not found")));
     }
 
     private User fromEntity(UserEntity user) {
