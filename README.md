@@ -27,4 +27,7 @@ go to: http://localhost/swagger-ui.html
   - users
   - security
   - tests
+  - clean architecture based on java modules
+  - refresh token
+  - Angular frontend
   
