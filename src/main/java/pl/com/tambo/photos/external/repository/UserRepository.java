@@ -3,9 +3,10 @@ package pl.com.tambo.photos.external.repository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
+import pl.com.tambo.photos.core.exception.UserAlreadyExistsException;
+import pl.com.tambo.photos.core.exception.UserNotFoundException;
 import pl.com.tambo.photos.core.model.User;
 import pl.com.tambo.photos.external.entity.UserEntity;
 
@@ -18,15 +19,18 @@ public class UserRepository implements UserDetailsService {
     private final JpaUserRepository users;
 
     public User save(User newUser) {
+        if(users.existsByEmail(newUser.getEmail())) {
+            throw new UserAlreadyExistsException(newUser.getEmail());
+        }
         UserEntity entity = users.saveAndFlush(toEntity(newUser));
         return fromEntity(entity);
     }
 
     @Override
-    public User loadUserByUsername(String email) throws UsernameNotFoundException {
+    public User loadUserByUsername(String email) {
         return users.findByEmail(email)
                 .map(this::fromEntity)
-                .orElseThrow(() -> new UsernameNotFoundException("User with e-mail address: " + email + " not found"));
+                .orElseThrow(() -> new UserNotFoundException(email));
     }
 
     private User fromEntity(UserEntity user) {
@@ -51,4 +55,5 @@ public class UserRepository implements UserDetailsService {
 @Repository
 interface JpaUserRepository extends JpaRepository<UserEntity, Long> {
     Optional<UserEntity> findByEmail(String email);
+    Boolean existsByEmail(String email);
 }

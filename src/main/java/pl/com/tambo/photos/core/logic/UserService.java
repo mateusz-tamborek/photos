@@ -2,12 +2,11 @@ package pl.com.tambo.photos.core.logic;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import pl.com.tambo.photos.config.security.JwtTokenProvider;
+import pl.com.tambo.photos.core.exception.AuthenticationException;
 import pl.com.tambo.photos.core.model.User;
 import pl.com.tambo.photos.delivery.dto.request.AuthenticationRequest;
 import pl.com.tambo.photos.external.repository.UserRepository;
@@ -39,8 +38,8 @@ public class UserService {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, request.getPassword()));
             List<String> roles = userRepository.loadUserByUsername(username).getRoles();
             return jwtTokenProvider.createToken(username, roles);
-        } catch (AuthenticationException e) {
-            throw new BadCredentialsException("Invalid email/password supplied");
+        } catch (Exception e) {
+            throw new AuthenticationException("Invalid email/password supplied");
         }
     }
 }
