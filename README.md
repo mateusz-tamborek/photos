@@ -14,7 +14,11 @@ docker and docker-compose
  - ./gradlew bootRun (only if you have a locally running database)
  
 ## How to use?
-go to: http://localhost/swagger-ui.html
+1. Go to: http://localhost/swagger-ui.html
+2. Create your own user at the endpoint /users or use the default user with credentials: user@domain.com / Password123!
+3. Get token under /auth/token
+4. Click Authorize button and type: "Bearer {your token}" without quotes
+5. Enjoy :)
  
 ## Used technologies
  - Java 8
@@ -24,7 +28,6 @@ go to: http://localhost/swagger-ui.html
  - Swagger
  
  ### TODO:
-  - liquibase
   - tests
   - clean architecture based on java modules
   - refresh token
