@@ -24,10 +24,10 @@ go to: http://localhost/swagger-ui.html
  - Swagger
  
  ### TODO:
-  - users
-  - security
+  - liquibase
   - tests
   - clean architecture based on java modules
   - refresh token
+  - logs
   - Angular frontend
   
