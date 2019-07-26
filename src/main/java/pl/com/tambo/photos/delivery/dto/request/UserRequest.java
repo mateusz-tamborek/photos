@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
 @Data
@@ -17,6 +18,7 @@ public class UserRequest {
 
     @ApiModelProperty(required = true, example = "user@domain.com")
     @Email
+    @NotBlank
     private String email;
 
     @ApiModelProperty(required = true, example = "Password123!")

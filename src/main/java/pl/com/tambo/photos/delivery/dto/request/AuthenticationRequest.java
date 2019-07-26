@@ -13,6 +13,7 @@ public class AuthenticationRequest {
 
     @ApiModelProperty(required = true, example = "user@domain.com")
     @Email
+    @NotBlank
     private String email;
 
     @ApiModelProperty(required = true, example = "Password123!")
