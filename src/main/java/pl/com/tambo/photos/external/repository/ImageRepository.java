@@ -1,81 +1,62 @@
 package pl.com.tambo.photos.external.repository;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 import pl.com.tambo.photos.core.exception.ImageNotFoundException;
 import pl.com.tambo.photos.core.model.Image;
+import pl.com.tambo.photos.core.model.User;
+import pl.com.tambo.photos.external.converter.ImageConverter;
+import pl.com.tambo.photos.external.converter.UserConverter;
 import pl.com.tambo.photos.external.entity.ImageEntity;
+import pl.com.tambo.photos.external.entity.UserEntity;
 
-import java.nio.file.Path;
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 @RequiredArgsConstructor
 public class ImageRepository {
 
-    @Value("${upload.dir}")
-    private Path uploadPath;
     private final JpaImageRepository repository;
+    private final ImageConverter imageConverter;
+    private final UserConverter userConverter;
 
-    public List<Image> findAll(Pageable pageable) {
-        Page<ImageEntity> page = repository.findAll(pageable);
-        return page.map(this::fromEntity)
-                .getContent();
+    public Image findBy(UUID id, User user) {
+        ImageEntity entity = getImageEntity(id, user);
+        return imageConverter.fromEntity(entity);
     }
 
-    public Image findBy(UUID id) {
-        ImageEntity entity = repository.findById(id)
-                .orElseThrow(() -> new ImageNotFoundException(id));
-        return fromEntity(entity);
-    }
-
-    public List<Image> findByNameContaining(String name, Pageable pageable) {
-        Page<ImageEntity> page = repository.findAllByFilenameIgnoreCaseContaining(name, pageable);
-        return page.map(this::fromEntity)
+    public List<Image> findByNameContaining(String name, User user, Pageable pageable) {
+        UserEntity userEntity = userConverter.toEntity(user);
+        Page<ImageEntity> page = repository.findAllByUserAndFilenameIgnoreCaseContaining(userEntity, name, pageable);
+        return page.map(imageConverter::fromEntity)
                 .getContent();
     }
 
     public Image save(Image image) {
-        ImageEntity persisted = repository.save(toEntity(image));
-        return fromEntity(persisted);
+        ImageEntity persisted = repository.save(imageConverter.toEntity(image));
+        return imageConverter.fromEntity(persisted);
     }
 
-    public void delete(UUID id) {
-        try {
-            repository.deleteById(id);
-        } catch (EmptyResultDataAccessException ex) {
-            throw new ImageNotFoundException(id);
-        }
+    public void deleteBy(UUID id, User user) {
+        ImageEntity entity = getImageEntity(id, user);
+        repository.delete(entity);
     }
 
-    private ImageEntity toEntity(Image image) {
-        return ImageEntity.builder()
-                .id(image.getId())
-                .filename(image.getFilename())
-                .uploadTimestamp(LocalDateTime.now())
-                .build();
-    }
-
-    private Image fromEntity(ImageEntity entity) {
-        return Image.builder()
-                .id(entity.getId())
-                .filename(entity.getFilename())
-                .uploadTimestamp(entity.getUploadTimestamp())
-                .path(uploadPath)
-                .build();
+    private ImageEntity getImageEntity(UUID id, User user) {
+        UserEntity userEntity = userConverter.toEntity(user);
+        return repository.findByUserAndId(userEntity, id)
+                .orElseThrow(() -> new ImageNotFoundException(id));
     }
 
 }
 
-//@Repository
 interface JpaImageRepository extends PagingAndSortingRepository<ImageEntity, UUID> {
-    Page<ImageEntity> findAllByFilenameIgnoreCaseContaining(String filename, Pageable pageable);
+    Optional<ImageEntity> findByUserAndId(UserEntity user, UUID id);
+    Page<ImageEntity> findAllByUserAndFilenameIgnoreCaseContaining(UserEntity user, String filename, Pageable pageable);
 }
 

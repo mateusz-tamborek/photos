@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pl.com.tambo.photos.core.logic.UserService;
@@ -33,10 +34,10 @@ public class UserController {
     }
 
     @PatchMapping(value = "/{userId}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public void updateUser(@PathVariable long userId, @Valid @RequestBody UserRequest request) {
-        // TODO: old token should be withdrawn
+    public void updateUser(@PathVariable long userId, @AuthenticationPrincipal User user,
+                           @Valid @RequestBody UserRequest request) {
         request.setId(userId);
-        userService.updateUser(request);
+        userService.updateUser(request, user);
     }
 
 }

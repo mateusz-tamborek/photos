@@ -8,16 +8,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import pl.com.tambo.photos.core.exception.AuthenticationException;
+import pl.com.tambo.photos.core.model.User;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -29,39 +28,39 @@ public class JwtTokenProvider {
     @Value("${security.jwt.token.expire-length}")
     private long validityInMilliseconds;
 
-    private final UserDetailsService userDetailsService;
-
     @PostConstruct
     protected void init() {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
     }
 
-    public String createToken(String username, List<String> roles) {
-        Claims claims = Jwts.claims().setSubject(username);
-        claims.put("roles", roles);
-
+    public String createToken(User user) {
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMilliseconds);
-
         return Jwts.builder()
-                .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(validity)
+                .claim("id", user.getId())
+                .claim("email", user.getEmail())
+                .claim("roles", user.getRoles())
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
 
     Authentication getAuthentication(String token) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(getUsername(token));
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+        Claims claims = getClaims(token);
+        User user = User.builder()
+                .id(claims.get("id", Long.class))
+                .email(claims.get("email", String.class))
+                .roles(claims.get("roles", ArrayList.class))
+                .build();
+        return new UsernamePasswordAuthenticationToken(user, "", user.getAuthorities());
     }
 
-    private String getUsername(String token) {
+    private Claims getClaims(String token) {
         return Jwts.parser()
                 .setSigningKey(secretKey)
                 .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
+                .getBody();
     }
 
     String resolveToken(HttpServletRequest req) {

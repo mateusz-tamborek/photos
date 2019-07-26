@@ -14,7 +14,6 @@ import pl.com.tambo.photos.delivery.dto.request.UserRequest;
 import pl.com.tambo.photos.external.repository.UserRepository;
 
 import java.util.Collections;
-import java.util.List;
 
 import static com.google.common.base.MoreObjects.firstNonNull;
 
@@ -37,7 +36,10 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public void updateUser(UserRequest request) {
+    public void updateUser(UserRequest request, User currentUser) {
+        if (!request.getId().equals(currentUser.getId())) {
+            throw new AuthenticationException("Unauthorized");
+        }
         checkEmail(request);
         User user = userRepository.findById(request.getId());
         user.setEmail(firstNonNull(request.getEmail(), user.getEmail()));
@@ -50,8 +52,8 @@ public class UserService {
         try {
             String username = request.getEmail();
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, request.getPassword()));
-            List<String> roles = userRepository.loadUserByUsername(username).getRoles();
-            return jwtTokenProvider.createToken(username, roles);
+            User user = userRepository.loadUserByUsername(username);
+            return jwtTokenProvider.createToken(user);
         } catch (Exception e) {
             throw new AuthenticationException("Invalid email/password supplied");
         }

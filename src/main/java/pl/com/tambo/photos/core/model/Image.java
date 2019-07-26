@@ -17,6 +17,7 @@ public class Image implements Storable {
     private final String filename;
     private final LocalDateTime uploadTimestamp;
     private final Path path;
+    private final long ownerId;
     private final Thumbnail thumbnail = new Thumbnail();
 
     public Path getPath() {

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import pl.com.tambo.photos.core.exception.StoreImageException;
 import pl.com.tambo.photos.core.model.Image;
 import pl.com.tambo.photos.core.model.Image.Thumbnail;
+import pl.com.tambo.photos.core.model.User;
 import pl.com.tambo.photos.external.repository.ImageRepository;
 
 import javax.imageio.ImageIO;
@@ -30,11 +31,12 @@ public class ImageService {
         Files.createDirectories(thumbnailPath);
     }
 
-    public Image save(ImageFile imageFile) {
+    public Image save(ImageFile imageFile, User user) {
         Image image = Image.builder()
                 .id(imageFile.getId())
                 .filename(imageFile.name())
                 .path(uploadPath)
+                .ownerId(user.getId())
                 .build();
         try {
             createAndStoreThumbnail(imageFile, image.getThumbnail());
@@ -53,20 +55,16 @@ public class ImageService {
         }
     }
 
-    public Image findBy(UUID id) {
-        return imageRepository.findBy(id);
+    public Image findBy(UUID id, User user) {
+        return imageRepository.findBy(id, user);
     }
 
-    public List<Image> findAll(Pageable pageable) {
-        return imageRepository.findAll(pageable);
+    public List<Image> findByName(String name, User user, Pageable pageable) {
+        return imageRepository.findByNameContaining(name, user, pageable);
     }
 
-    public List<Image> findByName(String name, Pageable pageable) {
-        return imageRepository.findByNameContaining(name, pageable);
-    }
-
-    public void delete(UUID id) {
-        imageRepository.delete(id);
+    public void delete(UUID id, User user) {
+        imageRepository.deleteBy(id, user);
     }
 
     private void storeOriginalImage(ImageFile imageFile, Image image) throws IOException {

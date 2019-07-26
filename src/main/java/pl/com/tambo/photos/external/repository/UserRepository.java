@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import pl.com.tambo.photos.core.exception.UserNotFoundException;
 import pl.com.tambo.photos.core.model.User;
+import pl.com.tambo.photos.external.converter.UserConverter;
 import pl.com.tambo.photos.external.entity.UserEntity;
 
 import java.util.Optional;
@@ -16,16 +17,17 @@ import java.util.Optional;
 public class UserRepository implements UserDetailsService {
 
     private final JpaUserRepository users;
+    private final UserConverter converter;
 
     public User save(User newUser) {
-        UserEntity entity = users.saveAndFlush(toEntity(newUser));
-        return fromEntity(entity);
+        UserEntity entity = users.saveAndFlush(converter.toEntity(newUser));
+        return converter.fromEntity(entity);
     }
 
     @Override
     public User loadUserByUsername(String email) {
         return users.findByEmail(email)
-                .map(this::fromEntity)
+                .map(converter::fromEntity)
                 .orElseThrow(() -> new UserNotFoundException("User with email: " + email + " not found"));
     }
 
@@ -34,27 +36,10 @@ public class UserRepository implements UserDetailsService {
     }
 
     public User findById(long id) {
-        return fromEntity(users.findById(id)
+        return converter.fromEntity(users.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User with id: " + id + " not found")));
     }
 
-    private User fromEntity(UserEntity user) {
-        return User.builder()
-                .id(user.getId())
-                .email(user.getEmail())
-                .password(user.getPassword())
-                .roles(user.getRoles())
-                .build();
-    }
-
-    private UserEntity toEntity(User user) {
-        return UserEntity.builder()
-                .id(user.getId())
-                .email(user.getEmail())
-                .password(user.getPassword())
-                .roles(user.getRoles())
-                .build();
-    }
 }
 
 @Repository

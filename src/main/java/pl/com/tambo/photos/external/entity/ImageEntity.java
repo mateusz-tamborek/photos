@@ -5,9 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Tolerate;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -24,6 +22,9 @@ public class ImageEntity {
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime uploadTimestamp;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    private UserEntity user;
 
     @Tolerate
     ImageEntity() {

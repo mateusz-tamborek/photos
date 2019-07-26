@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
+import pl.com.tambo.photos.core.model.User;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -35,7 +36,7 @@ public class SwaggerConfig {
                 .build()
                 .useDefaultResponseMessages(false)
                 .ignoredParameterTypes(Pageable.class)
-                .ignoredParameterTypes(UserDetails.class)
+                .ignoredParameterTypes(UserDetails.class, User.class)
                 .apiInfo(new ApiInfoBuilder()
                         .title("Photo gallery")
                         .description("API documentation")
@@ -60,6 +61,5 @@ public class SwaggerConfig {
         AuthorizationScope scope = new AuthorizationScope("global", "accessEverything");
         return Lists.newArrayList(new SecurityReference(SCHEME, new AuthorizationScope[]{scope}));
     }
-
 
 }
