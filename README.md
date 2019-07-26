@@ -31,6 +31,5 @@ docker and docker-compose
   - tests
   - clean architecture based on java modules
   - refresh token
-  - logs
   - Angular frontend
   
