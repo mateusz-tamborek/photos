@@ -1,5 +1,6 @@
 package pl.com.tambo.photos.core.logic;
 
+import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Service;
 import pl.com.tambo.photos.core.exception.StoreImageException;
 import pl.com.tambo.photos.core.model.Image;
 import pl.com.tambo.photos.core.model.Image.Thumbnail;
+import pl.com.tambo.photos.core.model.ImageFile;
 import pl.com.tambo.photos.core.model.User;
 import pl.com.tambo.photos.external.repository.ImageRepository;
 
@@ -18,6 +20,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 public class ImageService {
 
@@ -26,8 +29,9 @@ public class ImageService {
 
     ImageService(ImageRepository imageRepository, @Value("${upload.dir}") Path uploadPath) throws IOException {
         this.imageRepository = imageRepository;
-        this.uploadPath = uploadPath;
-        Path thumbnailPath = uploadPath.resolve(Thumbnail.DIRECTORY);
+        this.uploadPath = uploadPath.toAbsolutePath();
+        Path thumbnailPath = this.uploadPath.resolve(Thumbnail.DIRECTORY);
+        log.debug("Create directories for images at: {} and {}", this.uploadPath, thumbnailPath);
         Files.createDirectories(thumbnailPath);
     }
 

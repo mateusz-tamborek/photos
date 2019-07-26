@@ -1,4 +1,4 @@
-package pl.com.tambo.photos.core.logic;
+package pl.com.tambo.photos.core.model;
 
 import lombok.Getter;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,7 +19,7 @@ public class ImageFile {
         this.file = file;
     }
 
-    String name() {
+    public String name() {
         return file.getOriginalFilename();
     }
 
