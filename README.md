@@ -28,6 +28,7 @@ docker and docker-compose
  - Swagger
  
  ### TODO:
+  - global exception handler
   - tests
   - clean architecture based on java modules
   - refresh token
