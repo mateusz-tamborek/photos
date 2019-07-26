@@ -78,7 +78,7 @@ public class ImageController {
         return ImageFilePresenter.getResponse(image);
     }
 
-    @GetMapping(value = "/thumbnails/{id}", produces = MediaType.IMAGE_PNG_VALUE)
+    @GetMapping(value = "/thumbnails/{id}")
     public ResponseEntity<byte[]> getThumbnail(
             @AuthenticationPrincipal User user,
             @ApiParam(value = "Image identifier", required = true)
