@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @RequiredArgsConstructor
@@ -33,11 +34,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers(SWAGGER).permitAll()
                     .antMatchers(AUTH).permitAll()
                     .antMatchers(HttpMethod.POST, USER).permitAll()
-                    .anyRequest().authenticated()
-                .and()
-                .apply(new JwtConfigurer(jwtTokenProvider));
-    }
+                    .anyRequest().authenticated();
 
+        http.addFilterBefore(new JwtTokenFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+    }
 
     @Bean
     @Override
