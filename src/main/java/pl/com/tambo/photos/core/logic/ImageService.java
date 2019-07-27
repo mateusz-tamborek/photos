@@ -11,6 +11,7 @@ import pl.com.tambo.photos.core.exception.StoreImageException;
 import pl.com.tambo.photos.core.model.Image;
 import pl.com.tambo.photos.core.model.Image.Thumbnail;
 import pl.com.tambo.photos.core.model.ImageFile;
+import pl.com.tambo.photos.core.model.OnePage;
 import pl.com.tambo.photos.core.model.User;
 import pl.com.tambo.photos.external.repository.ImageRepository;
 
@@ -19,7 +20,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -61,7 +61,7 @@ public class ImageService {
         return imageRepository.findBy(id, user);
     }
 
-    public List<Image> findByName(String name, User user, Pageable pageable) {
+    public OnePage<Image> findByName(String name, User user, Pageable pageable) {
         return imageRepository.findByNameContaining(name, user, pageable);
     }
 

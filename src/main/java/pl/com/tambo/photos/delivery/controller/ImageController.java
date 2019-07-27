@@ -14,15 +14,16 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pl.com.tambo.photos.core.logic.ImageService;
 import pl.com.tambo.photos.core.model.Image;
 import pl.com.tambo.photos.core.model.ImageFile;
+import pl.com.tambo.photos.core.model.OnePage;
 import pl.com.tambo.photos.core.model.User;
 import pl.com.tambo.photos.delivery.ApiPageable;
 import pl.com.tambo.photos.delivery.dto.response.ImageResponse;
+import pl.com.tambo.photos.delivery.dto.response.PageResponse;
 import pl.com.tambo.photos.delivery.presenter.ImageFilePresenter;
 import pl.com.tambo.photos.delivery.presenter.ImagePresenter;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.List;
 import java.util.UUID;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
@@ -51,12 +52,12 @@ public class ImageController {
 
     @GetMapping(value = "/images", produces = APPLICATION_JSON_UTF8_VALUE)
     @ApiPageable
-    public List<ImageResponse> getImagesInfo(
+    public PageResponse<ImageResponse> getImagesInfo(
             @AuthenticationPrincipal User user,
             Pageable pageable,
             @ApiParam(value = "Searching by filename. Works as LIKE %name%")
             @RequestParam(name = "name", defaultValue = "", required = false) String name) {
-        List<Image> images = imageService.findByName(name, user, pageable);
+        OnePage<Image> images = imageService.findByName(name, user, pageable);
         return ImagePresenter.getResponse(images);
     }
 

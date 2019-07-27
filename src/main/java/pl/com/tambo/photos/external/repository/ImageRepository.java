@@ -7,6 +7,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 import pl.com.tambo.photos.core.exception.ImageNotFoundException;
 import pl.com.tambo.photos.core.model.Image;
+import pl.com.tambo.photos.core.model.OnePage;
 import pl.com.tambo.photos.core.model.User;
 import pl.com.tambo.photos.external.converter.ImageConverter;
 import pl.com.tambo.photos.external.converter.UserConverter;
@@ -30,11 +31,15 @@ public class ImageRepository {
         return imageConverter.fromEntity(entity);
     }
 
-    public List<Image> findByNameContaining(String name, User user, Pageable pageable) {
+    public OnePage<Image> findByNameContaining(String name, User user, Pageable pageable) {
         UserEntity userEntity = userConverter.toEntity(user);
         Page<ImageEntity> page = repository.findAllByUserAndFilenameIgnoreCaseContaining(userEntity, name, pageable);
-        return page.map(imageConverter::fromEntity)
-                .getContent();
+        List<Image> content = page.map(imageConverter::fromEntity).getContent();
+        return OnePage.<Image>builder()
+                .content(content)
+                .totalElements(page.getTotalElements())
+                .totalPages(page.getTotalPages())
+                .build();
     }
 
     public Image save(Image image) {
