@@ -1,6 +1,7 @@
 package pl.com.tambo.photos.external.converter;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import pl.com.tambo.photos.core.model.Image;
 import pl.com.tambo.photos.external.entity.ImageEntity;
@@ -23,6 +24,7 @@ public class ImageConverter {
                 .id(image.getId())
                 .filename(image.getFilename())
                 .uploadTimestamp(LocalDateTime.now())
+                .mediaType(image.getMediaType().toString())
                 .user(user)
                 .build();
     }
@@ -33,6 +35,7 @@ public class ImageConverter {
                 .filename(entity.getFilename())
                 .uploadTimestamp(entity.getUploadTimestamp())
                 .path(uploadPath)
+                .mediaType(MediaType.valueOf(entity.getMediaType()))
                 .ownerId(entity.getUser().getId())
                 .build();
     }

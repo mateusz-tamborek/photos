@@ -21,6 +21,9 @@ public class ImageEntity {
     private String filename;
 
     @Column(nullable = false, updatable = false)
+    private String mediaType;
+
+    @Column(nullable = false, updatable = false)
     private LocalDateTime uploadTimestamp;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

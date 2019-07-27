@@ -2,8 +2,10 @@ package pl.com.tambo.photos.core.logic;
 
 import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
+import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import pl.com.tambo.photos.core.exception.StoreImageException;
 import pl.com.tambo.photos.core.model.Image;
@@ -26,6 +28,7 @@ public class ImageService {
 
     private final ImageRepository imageRepository;
     private final Path uploadPath;
+    private final Tika mimeTypeDetector = new Tika();
 
     ImageService(ImageRepository imageRepository, @Value("${upload.dir}") Path uploadPath) throws IOException {
         this.imageRepository = imageRepository;
@@ -36,12 +39,7 @@ public class ImageService {
     }
 
     public Image save(ImageFile imageFile, User user) {
-        Image image = Image.builder()
-                .id(imageFile.getId())
-                .filename(imageFile.name())
-                .path(uploadPath)
-                .ownerId(user.getId())
-                .build();
+        Image image = getImage(imageFile, user);
         try {
             createAndStoreThumbnail(imageFile, image.getThumbnail());
             storeOriginalImage(imageFile, image);
@@ -69,6 +67,24 @@ public class ImageService {
 
     public void delete(UUID id, User user) {
         imageRepository.deleteBy(id, user);
+    }
+
+    private Image getImage(ImageFile imageFile, User user) {
+        return Image.builder()
+                .id(imageFile.getId())
+                .filename(imageFile.name())
+                .path(uploadPath)
+                .ownerId(user.getId())
+                .mediaType(getMediaType(imageFile))
+                .build();
+    }
+
+    private MediaType getMediaType(ImageFile imageFile) {
+        try {
+            return MediaType.valueOf(mimeTypeDetector.detect(imageFile.getFile().getBytes()));
+        } catch (IOException e) {
+            throw new StoreImageException(e);
+        }
     }
 
     private void storeOriginalImage(ImageFile imageFile, Image image) throws IOException {
