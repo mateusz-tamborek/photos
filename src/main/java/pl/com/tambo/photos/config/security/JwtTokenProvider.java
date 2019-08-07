@@ -40,7 +40,6 @@ public class JwtTokenProvider {
                 .setIssuedAt(now)
                 .setExpiration(validity)
                 .claim("id", user.getId())
-                .claim("email", user.getEmail())
                 .claim("roles", user.getRoles())
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
@@ -50,7 +49,6 @@ public class JwtTokenProvider {
         Claims claims = getClaims(token);
         User user = User.builder()
                 .id(claims.get("id", Long.class))
-                .email(claims.get("email", String.class))
                 .roles(claims.get("roles", ArrayList.class))
                 .build();
         return new UsernamePasswordAuthenticationToken(user, "", user.getAuthorities());
